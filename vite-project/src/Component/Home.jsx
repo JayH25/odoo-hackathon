@@ -66,19 +66,19 @@ const Home = () => {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto p-4">
+      <div className="relative z-10 max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <h1 className="text-5xl font-black text-center mb-10 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 bg-clip-text text-transparent animate-gradient">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-center mb-6 sm:mb-8 md:mb-10 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 bg-clip-text text-transparent animate-gradient px-4">
           StackIt
         </h1>
 
         {/* Top Actions */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center mb-6 sm:mb-8 md:mb-10 gap-4">
           {/* Left: Button & Filter */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
             <button
               onClick={handleAskQuestion}
-              className="relative group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-600/30"
+              className="relative group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/25 transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-600/30 w-full sm:w-auto text-center"
             >
               <span className="relative z-10">Ask New Question</span>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
@@ -87,7 +87,7 @@ const Home = () => {
             <select
               value={sortOrder}
               onChange={handleSortChange}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+              className="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 w-full sm:w-auto"
             >
               <option value="Filter">Filter</option>
               <option value="Newest">Newest</option>
@@ -109,22 +109,22 @@ const Home = () => {
         </div>
 
         {/* Questions List */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {filteredQuestions.length > 0 ? (
             filteredQuestions.map((q, index) => (
               <div
                 key={q._id}
-                className="group bg-gradient-to-br from-[#1a1a1a] to-[#151515] p-6 rounded-2xl border border-gray-800/50 shadow-xl transform transition-all duration-200 hover:border-gray-700/50"
+                className="group bg-gradient-to-br from-[#1a1a1a] to-[#151515] p-4 sm:p-6 rounded-2xl border border-gray-800/50 shadow-xl transform transition-all duration-200 hover:border-gray-700/50"
                 style={{
                   animationDelay: `${index * 50}ms`,
                   animation: "fadeInUp 0.5s ease-out forwards",
                 }}
               >
-                <h2 className="text-2xl font-bold text-white mb-3 leading-tight">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 leading-tight break-words">
                   {q.title}
                 </h2>
 
-                <p className="text-gray-400 leading-relaxed mb-4 line-clamp-2">
+                <p className="text-gray-400 leading-relaxed mb-4 line-clamp-2 text-sm sm:text-base">
                   {q.description}
                 </p>
 
@@ -132,15 +132,15 @@ const Home = () => {
                   {q.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 bg-gradient-to-r from-purple-900/20 to-blue-900/20 text-purple-300 text-sm rounded-full border border-purple-800/30 backdrop-blur-sm"
+                      className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-900/20 to-blue-900/20 text-purple-300 text-xs sm:text-sm rounded-full border border-purple-800/30 backdrop-blur-sm"
                     >
                       #{tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     <span className="text-gray-400">Asked by</span>{" "}
                     <span className="text-purple-400 font-medium">
                       {q.username}
@@ -149,18 +149,18 @@ const Home = () => {
 
                   <button
                     onClick={() => navigate(`/answer/${q._id}`)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg text-sm font-medium text-gray-300 transform transition-all duration-200 hover:scale-[1.02] hover:from-gray-700 hover:to-gray-600"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg text-xs sm:text-sm font-medium text-gray-300 transform transition-all duration-200 hover:scale-[1.02] hover:from-gray-700 hover:to-gray-600 w-full sm:w-auto justify-center sm:justify-start"
                   >
-                    <span className="text-2xl leading-none">💬</span>
+                    <span className="text-lg sm:text-2xl leading-none">💬</span>
                     <span>{q.answers.length} answers</span>
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">🔍</div>
-              <p className="text-gray-400 text-xl">
+            <div className="text-center py-12 sm:py-20 px-4">
+              <div className="text-4xl sm:text-6xl mb-4">🔍</div>
+              <p className="text-gray-400 text-lg sm:text-xl">
                 No questions found matching your search.
               </p>
             </div>
