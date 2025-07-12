@@ -4,6 +4,7 @@ import { FiSearch } from "react-icons/fi";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [sortOrder, setSortOrder] = useState("Filter");
   const [questions, setQuestions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -26,6 +27,10 @@ const Home = () => {
     fetchQuestions();
   }, []);
 
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
   const handleAskQuestion = () => {
     navigate("/addNewQuestion");
   };
@@ -34,15 +39,24 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredQuestions = questions.filter((q) => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return (
-      q.title.toLowerCase().includes(lowerCaseSearchTerm) ||
-      q.description.toLowerCase().includes(lowerCaseSearchTerm) ||
-      q.username.toLowerCase().includes(lowerCaseSearchTerm) ||
-      q.tags.some((tag) => tag.toLowerCase().includes(lowerCaseSearchTerm))
-    );
-  });
+  const filteredQuestions = questions
+    .filter((q) => {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      return (
+        q.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+        q.description.toLowerCase().includes(lowerCaseSearchTerm) ||
+        q.username.toLowerCase().includes(lowerCaseSearchTerm) ||
+        q.tags.some((tag) => tag.toLowerCase().includes(lowerCaseSearchTerm))
+      );
+    })
+    .sort((a, b) => {
+      if (sortOrder === "Newest") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sortOrder === "Oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      return 0; // No sorting for "Filter"
+    });
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
@@ -69,11 +83,15 @@ const Home = () => {
               <span className="relative z-10">Ask New Question</span>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
             </button>
-            
-            <select className="bg-[#1a1a1a] text-gray-300 px-6 py-3 rounded-xl border border-gray-800 focus:border-gray-600 focus:outline-none transition-colors duration-200 cursor-pointer">
-              <option>Newest Unanswered</option>
-              {/* <option>Most Voted</option> */}
-              <option>Oldest</option>
+
+            <select
+              value={sortOrder}
+              onChange={handleSortChange}
+              className="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+            >
+              <option value="Filter">Filter</option>
+              <option value="Newest">Newest</option>
+              <option value="Oldest">Oldest</option>
             </select>
           </div>
 
@@ -99,17 +117,17 @@ const Home = () => {
                 className="group bg-gradient-to-br from-[#1a1a1a] to-[#151515] p-6 rounded-2xl border border-gray-800/50 shadow-xl transform transition-all duration-200 hover:border-gray-700/50"
                 style={{
                   animationDelay: `${index * 50}ms`,
-                  animation: 'fadeInUp 0.5s ease-out forwards',
+                  animation: "fadeInUp 0.5s ease-out forwards",
                 }}
               >
                 <h2 className="text-2xl font-bold text-white mb-3 leading-tight">
                   {q.title}
                 </h2>
-                
+
                 <p className="text-gray-400 leading-relaxed mb-4 line-clamp-2">
                   {q.description}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {q.tags.map((tag, idx) => (
                     <span
@@ -120,13 +138,15 @@ const Home = () => {
                     </span>
                   ))}
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-500">
                     <span className="text-gray-400">Asked by</span>{" "}
-                    <span className="text-purple-400 font-medium">{q.username}</span>
+                    <span className="text-purple-400 font-medium">
+                      {q.username}
+                    </span>
                   </div>
-                  
+
                   <button
                     onClick={() => navigate(`/answer/${q._id}`)}
                     className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg text-sm font-medium text-gray-300 transform transition-all duration-200 hover:scale-[1.02] hover:from-gray-700 hover:to-gray-600"
@@ -161,7 +181,8 @@ const Home = () => {
         }
 
         @keyframes gradient {
-          0%, 100% {
+          0%,
+          100% {
             background-size: 200% 200%;
             background-position: left center;
           }

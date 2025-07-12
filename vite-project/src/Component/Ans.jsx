@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
+import RichTextEditor from "../Component/RichTextEditor"; // Adjust path as needed
 
 const Ans = () => {
   const { id } = useParams();
   const [question, setQuestion] = useState(null);
   const [newAnswer, setNewAnswer] = useState("");
+
   const handleUpvote = async (answerIndex) => {
     const res = await fetch(
       `http://localhost:3004/api/v1/question/upvote/${id}/${answerIndex}`,
@@ -16,7 +18,7 @@ const Ans = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          username: "Proud Coyote", //  Replace with dynamic username from auth
+          username: "Proud Coyote", // Replace with dynamic username from auth
         }),
       }
     );
@@ -62,16 +64,16 @@ const Ans = () => {
       setQuestion(data.data);
       setNewAnswer("");
 
-      // After saving to backend, send email
+      // Send email with HTML content
       emailjs
         .send(
-          "service_mz1yjtv", // ✅ Your service ID
-          "template_v3k74ho", // ✅ Your template ID
+          "service_mz1yjtv", // Your service ID
+          "template_v3k74ho", // Your template ID
           {
             question_title: data.data.title,
-            answer_text: newAnswer,
+            answer_text: newAnswer, // HTML content will be sent as is
           },
-          "yFUGdMmz8V0skykGE" // ✅ Your public key (user ID)
+          "yFUGdMmz8V0skykGE" // Your public key (user ID)
         )
         .then(() => {
           console.log("✅ Email sent successfully");
@@ -183,15 +185,13 @@ const Ans = () => {
                       <span className="text-white font-medium px-2">
                         {a.votes}
                       </span>
-                      {/* <button className="text-gray-400 hover:text-red-400 transition-colors p-1">
-                        ⬇
-                      </button> */}
                     </div>
                   </div>
 
-                  <p className="text-gray-300 leading-relaxed pl-11">
-                    {a.anstext}
-                  </p>
+                  <p
+                    className="text-gray-300 leading-relaxed pl-11"
+                    dangerouslySetInnerHTML={{ __html: a.anstext }}
+                  />
                 </div>
               ))}
             </div>
@@ -205,13 +205,11 @@ const Ans = () => {
             Submit Your Answer
           </h3>
 
-          <textarea
-            className="w-full p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all duration-200 resize-none"
-            rows="5"
-            placeholder="Write your answer here..."
+          <RichTextEditor
             value={newAnswer}
-            onChange={(e) => setNewAnswer(e.target.value)}
-          ></textarea>
+            onChange={setNewAnswer}
+            placeholder="Write your answer here..."
+          />
 
           <button
             onClick={handleSubmit}

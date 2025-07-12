@@ -4,7 +4,7 @@ import Login from "./Component/Login";
 import SignUp from "./Component/Signup";
 import Home from "./Component/Home";
 import Ans from "./Component/Ans";
-
+import Aboutus from "./Component/Aboutus";
 import AskQuestion from "./Component/AskQuestion";
 
 function App() {
@@ -15,6 +15,7 @@ function App() {
       children: [
         { index: true, element: <Home /> },
         { path: "addNewQuestion", element: <AskQuestion /> },
+        { path: "/aboutus", element: <Aboutus /> },
         { path: "answer/:id", element: <Ans /> },
       ],
     },

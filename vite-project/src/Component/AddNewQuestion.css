@@ -443,3 +443,69 @@ body {
     display: none;
   }
 }
+/* AddNewQuestion.css */
+.full-page-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%), linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 20px 20px;
+  z-index: 0;
+}
+
+.floating-orbs .orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.1) 100%);
+  filter: blur(10px);
+  animation: float 6s infinite ease-in-out;
+}
+
+.floating-orbs .orb1 { width: 100px; height: 100px; top: 10%; left: 10%; }
+.floating-orbs .orb2 { width: 150px; height: 150px; top: 60%; right: 10%; }
+.floating-orbs .orb3 { width: 80px; height: 80px; bottom: 20%; left: 70%; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: notificationSlide 0.5s ease-out;
+}
+
+.notification.success { background-color: #10b981; color: white; }
+.notification.error { background-color: #ef4444; color: white; }
+
+.notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+  animation: progress 3s linear forwards;
+}
+
+@keyframes notificationSlide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes progress {
+  from { width: 100%; }
+  to { width: 0; }
+}

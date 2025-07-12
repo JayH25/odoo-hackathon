@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import {
-  User,
-  Settings,
-  LogOut,
-  HelpCircle,
-  ChevronDown,
-} from "lucide-react";
+import { User, Settings, LogOut, HelpCircle, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,13 +34,13 @@ const Navbar = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.profile-dropdown')) {
+      if (!event.target.closest(".profile-dropdown")) {
         setShowProfileDropdown(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -71,8 +65,8 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: "Home" },
-    { to: "/about", label: "About" },
-    { to: "/team", label: "Team" },
+
+    { to: "/aboutus", label: "About-Us" },
   ];
 
   const profileMenuItems = [
@@ -115,11 +109,13 @@ const Navbar = () => {
                     {username.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="text-white font-medium hidden sm:block">{username}</span>
-                <ChevronDown 
-                  size={16} 
+                <span className="text-white font-medium hidden sm:block">
+                  {username}
+                </span>
+                <ChevronDown
+                  size={16}
                   className={`text-gray-400 transition-transform duration-200 ${
-                    showProfileDropdown ? 'rotate-180' : ''
+                    showProfileDropdown ? "rotate-180" : ""
                   }`}
                 />
               </button>
@@ -134,7 +130,10 @@ const Navbar = () => {
                   <div className="py-2">
                     {profileMenuItems.map((item, index) =>
                       item.divider ? (
-                        <div key={index} className="my-2 border-t border-gray-700" />
+                        <div
+                          key={index}
+                          className="my-2 border-t border-gray-700"
+                        />
                       ) : (
                         <button
                           key={index}
