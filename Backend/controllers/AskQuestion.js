@@ -31,3 +31,15 @@ export const askQuestion = catchAsyncErr(async (req, res) => {
     data: askQues,
   });
 });
+export const getquestion = catchAsyncErr(async (req, res) => {
+  const isQuestion = await AskQuestion.find();
+  if (!isQuestion) {
+    res.json({
+      message: "Fail to fetch ",
+    });
+  }
+  res.json({
+    success: true,
+    message: isQuestion,
+  });
+});

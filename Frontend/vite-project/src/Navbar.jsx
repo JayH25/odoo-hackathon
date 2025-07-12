@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    setIsLoggedIn(document.cookie.includes("token")); // backend JWT
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("http://localhost:3004/api/v1/user/me", {
+          method: "GET",
+          credentials: "include",
+        });
+        setIsLoggedIn(res.ok);
+      } catch (err) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
   }, []);
 
   const handleLogout = async () => {
@@ -24,6 +35,11 @@ const Navbar = () => {
   };
 
   const handleLoginClick = () => navigate("/login");
+
+  // Hide navbar on login/signup pages
+  const hideNavbar =
+    location.pathname === "/login" || location.pathname === "/signup";
+  if (hideNavbar) return null;
 
   const links = [
     { to: "/", label: "Home" },
@@ -59,14 +75,14 @@ const Navbar = () => {
               onClick={handleLogout}
               className="text-white bg-red-500 px-5 py-2 rounded-full"
             >
-              Logout
+              Sign Out
             </button>
           ) : (
             <button
               onClick={handleLoginClick}
               className="text-white bg-blue-500 px-5 py-2 rounded-full"
             >
-              Login
+              Sign In
             </button>
           )}
         </div>
