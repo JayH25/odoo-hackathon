@@ -1,5 +1,25 @@
 import mongoose from "mongoose";
 
+const answerSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    votes: {
+      type: Number,
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const askQuestionSchema = new mongoose.Schema(
   {
     username: {
@@ -20,9 +40,10 @@ const askQuestionSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    answers: [answerSchema], // ✅ Embed the Answer schema
   },
   {
-    timestamps: true, // createdAt, updatedAt
+    timestamps: true,
   }
 );
 
