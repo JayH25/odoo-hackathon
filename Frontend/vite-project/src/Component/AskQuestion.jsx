@@ -1,218 +1,299 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import "./AddNewQuestion.css";
+import React, { useState, useRef } from "react";
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Quote,
+  Link,
+  Image,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Code,
+  Strikethrough,
+} from "lucide-react";
 
-const AddNewQuestion = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
-  const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [charCount, setCharCount] = useState(0);
-  const formRef = useRef(null);
-  const navigate = useNavigate();
+const RichTextEditor = ({ value, onChange, placeholder }) => {
+  const editorRef = useRef(null);
 
-  // Mouse move effect
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (formRef.current) {
-        const rect = formRef.current.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
-        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
-        formRef.current.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (formRef.current) {
-        formRef.current.style.transform =
-          "perspective(1000px) rotateY(0deg) rotateX(0deg)";
-      }
-    };
-
-    const form = formRef.current;
-    if (form) {
-      form.addEventListener("mousemove", handleMouseMove);
-      form.addEventListener("mouseleave", handleMouseLeave);
-    }
-
-    return () => {
-      if (form) {
-        form.removeEventListener("mousemove", handleMouseMove);
-        form.removeEventListener("mouseleave", handleMouseLeave);
-      }
-    };
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validation
-    if (!username.trim() || !title.trim() || !description.trim()) {
-      showNotification("Please fill in all required fields", "error");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("http://localhost:3004/api/v1/question/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim(),
-          tags: tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag),
-          username: username.trim(),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        showNotification("Question posted successfully! 🎉", "success");
-        // Clear form
-        setTitle("");
-        setDescription("");
-        setTags("");
-        setUsername("");
-        setTimeout(() => navigate("/"), 1500);
-      } else {
-        showNotification(data.message || "Something went wrong", "error");
-      }
-    } catch (err) {
-      console.error("Post question error:", err);
-      showNotification("Failed to post question. Please try again.", "error");
-    } finally {
-      setIsLoading(false);
+  const executeCommand = (command, value = null) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
     }
   };
 
-  const showNotification = (message, type) => {
-    // Remove any existing notifications
-    document.querySelectorAll(".notification").forEach((n) => n.remove());
-
-    const notification = document.createElement("div");
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `
-      <span>${message}</span>
-      <div class="notification-progress"></div>
-    `;
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      notification.style.animation = "notificationSlide 0.5s reverse";
-      setTimeout(() => notification.remove(), 500);
-    }, 3000);
+  const handleInput = () => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
   };
 
-  const handleDescriptionChange = (e) => {
-    const value = e.target.value;
-    setDescription(value);
-    setCharCount(value.length);
-  };
+  const toolbarButtons = [
+    { icon: Bold, command: "bold", title: "Bold" },
+    { icon: Italic, command: "italic", title: "Italic" },
+    { icon: Underline, command: "underline", title: "Underline" },
+    { icon: Strikethrough, command: "strikeThrough", title: "Strikethrough" },
+    { divider: true },
+    { icon: List, command: "insertUnorderedList", title: "Bullet List" },
+    { icon: ListOrdered, command: "insertOrderedList", title: "Numbered List" },
+    { divider: true },
+    {
+      icon: Quote,
+      command: "formatBlock",
+      value: "blockquote",
+      title: "Quote",
+    },
+    { divider: true },
+    {
+      icon: Link,
+      command: "createLink",
+      title: "Insert Link",
+      needsValue: true,
+    },
+    {
+      icon: Image,
+      command: "insertImage",
+      title: "Insert Image",
+      needsValue: true,
+    },
+    { divider: true },
+    { icon: AlignLeft, command: "justifyLeft", title: "Align Left" },
+    { icon: AlignCenter, command: "justifyCenter", title: "Align Center" },
+    { icon: AlignRight, command: "justifyRight", title: "Align Right" },
+  ];
 
-  const formatTag = (e) => {
-    // Auto-format tags as user types
-    const value = e.target.value;
-    const formatted = value.toLowerCase().replace(/[^a-z0-9,]/g, "");
-    setTags(formatted);
+  const handleButtonClick = (button) => {
+    if (button.needsValue) {
+      const value = prompt(`Enter ${button.title.toLowerCase()}:`);
+      if (value) {
+        executeCommand(button.command, value);
+      }
+    } else {
+      executeCommand(button.command, button.value);
+    }
   };
 
   return (
-    <div className="full-page-container">
-      {/* Animated background elements */}
-      <div className="grid-overlay"></div>
-
-      {/* Floating orbs */}
-      <div className="floating-orbs">
-        <div className="orb orb1"></div>
-        <div className="orb orb2"></div>
-        <div className="orb orb3"></div>
+    <div className="border border-gray-600 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
+      {/* Toolbar */}
+      <div className="bg-gray-700 px-4 py-3 border-b border-gray-600 flex items-center gap-2 flex-wrap">
+        {toolbarButtons.map((button, index) =>
+          button.divider ? (
+            <div key={index} className="w-px h-6 bg-gray-500 mx-2" />
+          ) : (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleButtonClick(button)}
+              className="p-2 rounded-lg hover:bg-gray-600 transition-all duration-200 text-gray-300 hover:text-white focus:ring-2 focus:ring-blue-500"
+              title={button.title}
+            >
+              <button.icon size={18} />
+            </button>
+          )
+        )}
       </div>
 
-      {/* Main form */}
-      <form ref={formRef} onSubmit={handleSubmit} className="question-form">
-        <h1 className="form-title" data-text="Ask Your Question">
-          Ask Your Question
-        </h1>
+      {/* Editor */}
+      <div
+        ref={editorRef}
+        contentEditable
+        onInput={handleInput}
+        className="p-5 min-h-[250px] text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition-all duration-200 text-left direction-ltr"
+        style={{
+          wordBreak: "break-word",
+          lineHeight: "1.6",
+          textAlign: "left",
+          direction: "ltr",
+        }}
+        dangerouslySetInnerHTML={{ __html: value }}
+        data-placeholder={placeholder}
+      />
 
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="Your Name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="form-input"
-            required
-            autoComplete="name"
-            maxLength={50}
-          />
-        </div>
+      <style jsx>{`
+        [contenteditable]:empty:before {
+          content: attr(data-placeholder);
+          color: #9ca3af;
+          pointer-events: none;
+          display: block;
+          text-align: left;
+          direction: ltr;
+        }
 
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="What's your question?"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="form-input"
-            required
-            maxLength={200}
-          />
-          <span className="char-limit">{title.length}/200</span>
-        </div>
+        [contenteditable] blockquote {
+          border-left: 4px solid #6b7280;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          font-style: italic;
+          color: #d1d5db;
+        }
 
-        <div className="input-group">
-          <textarea
-            placeholder="Provide more details about your question..."
-            value={description}
-            onChange={handleDescriptionChange}
-            className="form-textarea"
-            required
-            maxLength={2000}
-          />
-          <span className="char-limit">{charCount}/2000</span>
-        </div>
+        [contenteditable] ul,
+        [contenteditable] ol {
+          padding-left: 2rem;
+          margin: 0.5rem 0;
+        }
 
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="Tags (e.g., javascript, react, css)"
-            value={tags}
-            onChange={formatTag}
-            className="form-input"
-            title="Tags should be comma-separated"
-          />
-          <span className="input-hint">Separate tags with commas</span>
-        </div>
+        [contenteditable] li {
+          margin: 0.25rem 0;
+        }
 
-        <button type="submit" className="submit-button" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <span className="loading-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-              Posting
-            </>
-          ) : (
-            <>
-              <span className="button-text">Post Question</span>
-              <span className="button-icon">→</span>
-            </>
-          )}
-        </button>
-      </form>
+        [contenteditable] a {
+          color: #60a5fa;
+          text-decoration: underline;
+        }
+
+        [contenteditable] img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 0.375rem;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default AddNewQuestion;
+const AskQuestion = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Simulate API call
+      setTimeout(() => {
+        setMessage("✅ Question submitted successfully!");
+        setTitle("");
+        setDescription("");
+        setTags("");
+        setLoading(false);
+      }, 2000);
+    } catch (err) {
+      setMessage("❌ Something went wrong.");
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4 pt-24">
+      {/* Main Form */}
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-700 p-8 shadow-2xl">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-white">Ask a Question</h2>
+            <div className="flex items-center gap-2 text-teal-400">
+              <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+
+          {message && (
+            <div
+              className={`mb-6 p-4 rounded-lg ${
+                message.includes("✅")
+                  ? "bg-green-900/50 border border-green-500"
+                  : "bg-red-900/50 border border-red-500"
+              }`}
+            >
+              <p className="text-sm text-center text-white">{message}</p>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-white/90 font-medium mb-3">
+                Title
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Enter a descriptive title for your question"
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-white/90 font-medium mb-3">
+                Description
+              </label>
+              <RichTextEditor
+                value={description}
+                onChange={setDescription}
+                placeholder="Describe your question in detail. Use the toolbar to format your text, add links, images, and more..."
+              />
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-white/90 font-medium mb-3">
+                Tags
+              </label>
+              <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                placeholder="e.g. React, JavaScript, Node.js, MongoDB"
+              />
+              <p className="text-gray-400 text-sm mt-2">
+                Separate tags with commas
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-6 flex justify-center">
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !title.trim() || !description.trim()}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:scale-100 min-w-[120px]"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AskQuestion;
