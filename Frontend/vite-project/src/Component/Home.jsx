@@ -6,28 +6,39 @@ const Home = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Fetch questions
+  const fetchQuestions = async () => {
+    try {
+      const res = await fetch("http://localhost:3004/api/v1/question/getques", {
+        credentials: "include",
+      });
+      const response = await res.json();
+      setQuestions(response.message || []);
+    } catch (err) {
+      console.error("Error fetching questions:", err);
+    }
+  };
+
+  // Check login state
+  const checkLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:3004/api/v1/user/me", {
+        credentials: "include",
+      });
+      setIsLoggedIn(res.ok);
+    } catch (err) {
+      setIsLoggedIn(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:3004/api/v1/question/getques",
-          {
-            credentials: "include",
-          }
-        );
-        const response = await res.json();
-        setQuestions(response.message || []);
-      } catch (err) {
-        console.error("Error fetching questions:", err);
-      }
-    };
-
+    checkLogin();
     fetchQuestions();
   }, []);
 
   const handleAskQuestion = () => {
-    const isLoggedIn = document.cookie.includes("token");
     if (isLoggedIn) {
       navigate("/addNewQuestion");
     } else {
@@ -35,7 +46,6 @@ const Home = () => {
     }
   };
 
-  // ✅ Filtered Questions based on Search Query
   const filteredQuestions = questions.filter((q) =>
     q.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -49,7 +59,6 @@ const Home = () => {
 
         {/* Top Actions */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          {/* Left: Button & Filter */}
           <div className="flex flex-wrap gap-4">
             <button
               onClick={handleAskQuestion}
@@ -64,7 +73,6 @@ const Home = () => {
             </select>
           </div>
 
-          {/* Right: Search Input */}
           <div className="flex gap-2 items-center w-full md:w-96">
             <input
               type="text"
@@ -86,16 +94,21 @@ const Home = () => {
                 className="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
               >
                 <h2 className="text-xl font-semibold text-white">{q.title}</h2>
-                <p className="text-gray-300 mt-2">{q.description}</p>
+                <div
+                  className="text-gray-300 mt-2"
+                  dangerouslySetInnerHTML={{
+                    __html: q.description.slice(0, 200) + "...",
+                  }}
+                />
                 <div className="text-sm text-blue-400 mt-3">
-                  Tags: {q.tags.join(", ")}
+                  Tags: {Array.isArray(q.tags) ? q.tags.join(", ") : q.tags}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
                   Asked by: {q.username}
                 </div>
                 <button onClick={() => navigate(`/answer/${q._id}`)}>
                   <span className="inline-block mt-2 px-2 py-1 bg-gray-700 text-sm rounded-full">
-                    {q.answers.length} answers
+                    {q.answers?.length || 0} answers
                   </span>
                 </button>
               </li>
