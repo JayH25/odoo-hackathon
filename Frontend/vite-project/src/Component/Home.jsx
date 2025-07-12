@@ -26,7 +26,12 @@ const Home = () => {
   }, []);
 
   const handleAskQuestion = () => {
-    navigate("/addNewQuestion");
+    const isLoggedIn = document.cookie.includes("token"); //  Check for token cookie
+    if (isLoggedIn) {
+      navigate("/addNewQuestion");
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
