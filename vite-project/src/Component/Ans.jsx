@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import emailjs from "@emailjs/browser";
 
 const Ans = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const Ans = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          username: "Proud Coyote", // 🔁 Replace with dynamic username from auth
+          username: "Proud Coyote", //  Replace with dynamic username from auth
         }),
       }
     );
@@ -51,14 +52,34 @@ const Ans = () => {
         credentials: "include",
         body: JSON.stringify({
           anstext: newAnswer,
-          username: "Proud Coyote", // Replace with dynamic username
+          username: "Proud Coyote", // Replace with dynamic username if needed
         }),
       }
     );
 
     const data = await res.json();
-    setQuestion(data.data);
-    setNewAnswer("");
+    if (data.success) {
+      setQuestion(data.data);
+      setNewAnswer("");
+
+      // After saving to backend, send email
+      emailjs
+        .send(
+          "service_mz1yjtv", // ✅ Your service ID
+          "template_v3k74ho", // ✅ Your template ID
+          {
+            question_title: data.data.title,
+            answer_text: newAnswer,
+          },
+          "yFUGdMmz8V0skykGE" // ✅ Your public key (user ID)
+        )
+        .then(() => {
+          console.log("✅ Email sent successfully");
+        })
+        .catch((err) => {
+          console.error("❌ Failed to send email", err);
+        });
+    }
   };
 
   if (!question)
