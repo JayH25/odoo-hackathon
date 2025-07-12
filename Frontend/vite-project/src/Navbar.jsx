@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import {
+  User,
+  Settings,
+  LogOut,
+  HelpCircle,
+  ChevronDown,
+} from "lucide-react";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [username, setUsername] = useState("JayH25");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -13,12 +22,31 @@ const Navbar = () => {
           method: "GET",
           credentials: "include",
         });
-        setIsLoggedIn(res.ok);
+        if (res.ok) {
+          const data = await res.json();
+          setIsLoggedIn(true);
+          // Assuming the API returns user data with username
+          setUsername(data.username || "User");
+        } else {
+          setIsLoggedIn(false);
+        }
       } catch (err) {
         setIsLoggedIn(false);
       }
     };
     checkAuth();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.profile-dropdown')) {
+        setShowProfileDropdown(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -47,6 +75,14 @@ const Navbar = () => {
     { to: "/team", label: "Team" },
   ];
 
+  const profileMenuItems = [
+    { icon: User, label: "My Profile", action: () => navigate("/profile") },
+    { icon: Settings, label: "Settings", action: () => navigate("/settings") },
+    { icon: HelpCircle, label: "Help", action: () => navigate("/help") },
+    { divider: true },
+    { icon: LogOut, label: "Logout", action: handleLogout },
+  ];
+
   const commonBtnClasses =
     "px-5 py-2 rounded-full text-base font-bold flex items-center justify-start shadow-sm";
 
@@ -71,16 +107,58 @@ const Navbar = () => {
           ))}
 
           {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="text-white bg-red-500 px-5 py-2 rounded-full"
-            >
-              Sign Out
-            </button>
+            <div className="relative profile-dropdown">
+              <button
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                className="flex items-center gap-3 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full hover:bg-gray-700/50 transition-all duration-200"
+              >
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">
+                    {username.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <span className="text-white font-medium hidden sm:block">{username}</span>
+                <ChevronDown 
+                  size={16} 
+                  className={`text-gray-400 transition-transform duration-200 ${
+                    showProfileDropdown ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {showProfileDropdown && (
+                <div className="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-700">
+                    <p className="text-sm text-gray-400">Signed in as</p>
+                    <p className="text-white font-semibold">{username}</p>
+                  </div>
+                  <div className="py-2">
+                    {profileMenuItems.map((item, index) =>
+                      item.divider ? (
+                        <div key={index} className="my-2 border-t border-gray-700" />
+                      ) : (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            item.action();
+                            setShowProfileDropdown(false);
+                          }}
+                          className="w-full px-4 py-2 text-left flex items-center gap-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                        >
+                          <item.icon size={18} />
+                          <span>{item.label}</span>
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               onClick={handleLoginClick}
-              className="text-white bg-blue-500 px-5 py-2 rounded-full"
+              className="text-white bg-blue-500 px-5 py-2 rounded-full hover:bg-blue-600 transition-colors"
             >
               Sign In
             </button>
