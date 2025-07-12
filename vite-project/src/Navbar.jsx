@@ -77,9 +77,7 @@ const Navbar = () => {
 
   const profileMenuItems = [
     { icon: User, label: "My Profile", action: () => navigate("/profile") },
-    { icon: Settings, label: "Settings", action: () => navigate("/settings") },
-    { icon: HelpCircle, label: "Help", action: () => navigate("/help") },
-    { divider: true },
+
     { icon: LogOut, label: "Logout", action: handleLogout },
   ];
 
