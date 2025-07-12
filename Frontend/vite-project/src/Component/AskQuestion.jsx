@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -17,6 +17,12 @@ import {
 
 const RichTextEditor = ({ value, onChange, placeholder }) => {
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (editorRef.current && !editorRef.current.innerHTML && value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, []);
 
   const executeCommand = (command, value = null) => {
     document.execCommand(command, false, value);
@@ -40,25 +46,10 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
     { icon: List, command: "insertUnorderedList", title: "Bullet List" },
     { icon: ListOrdered, command: "insertOrderedList", title: "Numbered List" },
     { divider: true },
-    {
-      icon: Quote,
-      command: "formatBlock",
-      value: "blockquote",
-      title: "Quote",
-    },
+    { icon: Quote, command: "formatBlock", value: "blockquote", title: "Quote" },
     { divider: true },
-    {
-      icon: Link,
-      command: "createLink",
-      title: "Insert Link",
-      needsValue: true,
-    },
-    {
-      icon: Image,
-      command: "insertImage",
-      title: "Insert Image",
-      needsValue: true,
-    },
+    { icon: Link, command: "createLink", title: "Insert Link", needsValue: true },
+    { icon: Image, command: "insertImage", title: "Insert Image", needsValue: true },
     { divider: true },
     { icon: AlignLeft, command: "justifyLeft", title: "Align Left" },
     { icon: AlignCenter, command: "justifyCenter", title: "Align Center" },
@@ -78,7 +69,6 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
 
   return (
     <div className="border border-gray-600 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
-      {/* Toolbar */}
       <div className="bg-gray-700 px-4 py-3 border-b border-gray-600 flex items-center gap-2 flex-wrap">
         {toolbarButtons.map((button, index) =>
           button.divider ? (
@@ -97,19 +87,11 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
         )}
       </div>
 
-      {/* Editor */}
       <div
         ref={editorRef}
         contentEditable
         onInput={handleInput}
         className="p-5 min-h-[250px] text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition-all duration-200 text-left direction-ltr"
-        style={{
-          wordBreak: "break-word",
-          lineHeight: "1.6",
-          textAlign: "left",
-          direction: "ltr",
-        }}
-        dangerouslySetInnerHTML={{ __html: value }}
         data-placeholder={placeholder}
       />
 
@@ -160,7 +142,7 @@ const AskQuestion = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
-  const [username, setUsername] = useState("JayH25");
+  const [username] = useState("JayH25");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -169,7 +151,6 @@ const AskQuestion = () => {
     setLoading(true);
 
     try {
-      // Simulate API call
       setTimeout(() => {
         setMessage("✅ Question submitted successfully!");
         setTitle("");
@@ -186,7 +167,6 @@ const AskQuestion = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4">
-      {/* Main Form */}
       <div className="max-w-4xl mx-auto">
         <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-700 p-8 shadow-2xl">
           <div className="flex items-center justify-between mb-8">
@@ -209,27 +189,19 @@ const AskQuestion = () => {
           )}
 
           <div className="space-y-6">
-            {/* Title */}
             <div>
-              <label className="block text-white/90 font-medium mb-3">
-                Title
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Enter a descriptive title for your question"
-                />
-              </div>
+              <label className="block text-white/90 font-medium mb-3">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                placeholder="Enter a descriptive title for your question"
+              />
             </div>
 
-            {/* Description */}
             <div>
-              <label className="block text-white/90 font-medium mb-3">
-                Description
-              </label>
+              <label className="block text-white/90 font-medium mb-3">Description</label>
               <RichTextEditor
                 value={description}
                 onChange={setDescription}
@@ -237,11 +209,8 @@ const AskQuestion = () => {
               />
             </div>
 
-            {/* Tags */}
             <div>
-              <label className="block text-white/90 font-medium mb-3">
-                Tags
-              </label>
+              <label className="block text-white/90 font-medium mb-3">Tags</label>
               <input
                 type="text"
                 value={tags}
@@ -249,12 +218,9 @@ const AskQuestion = () => {
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 placeholder="e.g. React, JavaScript, Node.js, MongoDB"
               />
-              <p className="text-gray-400 text-sm mt-2">
-                Separate tags with commas
-              </p>
+              <p className="text-gray-400 text-sm mt-2">Separate tags with commas</p>
             </div>
 
-            {/* Submit Button */}
             <div className="pt-6 flex justify-center">
               <button
                 onClick={handleSubmit}
