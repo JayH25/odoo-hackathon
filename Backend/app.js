@@ -7,6 +7,7 @@ import dbConnect from "./database/db.js";
 import userRoutes from "./router/userrouter.js";
 import ErrorMiddleware from "./middleware/err.js";
 import AskQues from "./router/AskQuestion.js";
+import AnswerRoutes from "./router/AnswerRoute.js";
 dotenv.config({ path: "./config/config.env" });
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/question", AskQues);
+app.use("/api/v1/question", AnswerRoutes);
 app.use(ErrorMiddleware);
 
 dbConnect();

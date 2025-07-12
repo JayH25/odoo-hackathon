@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
 const Home = () => {
-  const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
+  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -79,9 +79,11 @@ const Home = () => {
               <div className="text-xs text-gray-500 mt-1">
                 Asked by: {q.username}
               </div>
-              <span className="inline-block mt-2 px-2 py-1 bg-gray-700 text-sm rounded-full">
-                {q.answers.length} answers
-              </span>
+              <button onClick={() => navigate(`/answer/${q._id}`)}>
+                <span className="inline-block mt-2 px-2 py-1 bg-gray-700 text-sm rounded-full">
+                  {q.answers.length} answers
+                </span>
+              </button>
             </li>
           ))}
         </ul>
