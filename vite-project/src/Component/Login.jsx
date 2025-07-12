@@ -26,41 +26,58 @@ const Login = () => {
     }
   };
 
+
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4 sm:px-6 py-6 sm:py-0">
-      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md">
-        <h2 className="text-xl sm:text-2xl mb-4 font-bold text-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8 relative overflow-hidden">
+      <div className="grid-overlay"></div>
+      <div className="floating-orbs">
+        <div className="orb orb1"></div>
+        <div className="orb orb2"></div>
+        <div className="orb orb3"></div>
+      </div>
+      <div className="max-w-md mx-auto bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-700 p-8 shadow-2xl">
+        <h2 className="text-3xl font-extrabold text-center mb-8 text-orange-500 tracking-tight drop-shadow-lg">
           Login
         </h2>
-        {error && <p className="text-red-500 text-sm sm:text-base mb-3 text-center">{error}</p>}
-        <form onSubmit={handleLogin}>
-          <input
-            className="w-full mb-3 p-2 sm:p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-600"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            className="w-full mb-3 p-2 sm:p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-600"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        {error && <p className="text-red-500 text-center mb-6">{error}</p>}
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="input-group">
+            <label className="block text-white/90 font-medium mb-3">
+              Email
+            </label>
+            <input
+              className="w-full px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label className="block text-white/90 font-medium mb-3">
+              Password
+            </label>
+            <input
+              className="w-full px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
           <button
-            className="w-full bg-blue-600 text-white py-2 sm:py-2.5 rounded-lg text-sm sm:text-base hover:bg-blue-700 transition-colors duration-200"
+            className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed"
             type="submit"
           >
             Login
           </button>
         </form>
-
-        <p className="text-center mt-4 text-sm sm:text-base">
+       
+        <p className="text-center mt-6 text-gray-400">
           Don't have an account?{" "}
-          <a href="/signup" className="text-blue-500 underline hover:text-blue-700">
+          <a href="/signup" className="text-blue-400 hover:underline">
             Sign up
           </a>
         </p>
