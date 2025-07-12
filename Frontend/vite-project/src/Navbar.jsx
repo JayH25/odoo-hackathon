@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import {
-  User,
-  Settings,
-  LogOut,
-  HelpCircle,
-  ChevronDown,
-} from "lucide-react";
+import { User, Settings, LogOut, HelpCircle, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,13 +34,13 @@ const Navbar = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.profile-dropdown')) {
+      if (!event.target.closest(".profile-dropdown")) {
         setShowProfileDropdown(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -77,8 +71,7 @@ const Navbar = () => {
 
   const profileMenuItems = [
     { icon: User, label: "My Profile", action: () => navigate("/profile") },
-    { icon: Settings, label: "Settings", action: () => navigate("/settings") },
-    { icon: HelpCircle, label: "Help", action: () => navigate("/help") },
+
     { divider: true },
     { icon: LogOut, label: "Logout", action: handleLogout },
   ];
@@ -117,11 +110,13 @@ const Navbar = () => {
                     {username.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="text-white font-medium hidden sm:block">{username}</span>
-                <ChevronDown 
-                  size={16} 
+                <span className="text-white font-medium hidden sm:block">
+                  {username}
+                </span>
+                <ChevronDown
+                  size={16}
                   className={`text-gray-400 transition-transform duration-200 ${
-                    showProfileDropdown ? 'rotate-180' : ''
+                    showProfileDropdown ? "rotate-180" : ""
                   }`}
                 />
               </button>
@@ -129,14 +124,13 @@ const Navbar = () => {
               {/* Dropdown Menu */}
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-700">
-                    <p className="text-sm text-gray-400">Signed in as</p>
-                    <p className="text-white font-semibold">{username}</p>
-                  </div>
                   <div className="py-2">
                     {profileMenuItems.map((item, index) =>
                       item.divider ? (
-                        <div key={index} className="my-2 border-t border-gray-700" />
+                        <div
+                          key={index}
+                          className="my-2 border-t border-gray-700"
+                        />
                       ) : (
                         <button
                           key={index}
