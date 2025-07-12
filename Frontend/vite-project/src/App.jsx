@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import Login from "./Component/Login";
 import SignUp from "./Component/Signup";
 import Home from "./Component/Home";
-import About from "./Component/About";
+import Ans from "./Component/Answer";
 import Team from "./Component/Team";
 import AskQuestion from "./Component/AskQuestion";
 
@@ -15,6 +15,7 @@ function App() {
       children: [
         { index: true, element: <Home /> },
         { path: "addNewQuestion", element: <AskQuestion /> },
+        { path: "answer", element: <Ans /> },
         { path: "team", element: <Team /> },
       ],
     },
