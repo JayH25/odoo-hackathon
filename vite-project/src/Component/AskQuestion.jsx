@@ -85,7 +85,7 @@ const AddNewQuestion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4 sm:p-6 md:p-8 relative overflow-hidden">
       <div className="grid-overlay"></div>
       <div className="floating-orbs">
         <div className="orb orb1"></div>
@@ -96,18 +96,18 @@ const AddNewQuestion = () => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="max-w-4xl mx-auto bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-700 p-10 shadow-2xl"
+        className="max-w-4xl mx-auto bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-700 p-6 sm:p-8 md:p-10 shadow-2xl"
       >
         <h1
-          className="text-4xl font-extrabold text-center mb-10 text-orange-500 tracking-tight drop-shadow-lg"
+          className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-6 sm:mb-8 md:mb-10 text-orange-500 tracking-tight drop-shadow-lg px-4"
           data-text="Ask Your Question"
         >
           Ask Your Question
         </h1>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="input-group">
-            <label className="block text-white/90 font-medium mb-3">
+            <label className="block text-white/90 font-medium mb-2 sm:mb-3 text-sm sm:text-base">
               Your Name
             </label>
             <input
@@ -115,7 +115,7 @@ const AddNewQuestion = () => {
               placeholder="Your Name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              className="w-full px-4 sm:px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-sm sm:text-base"
               required
               autoComplete="name"
               maxLength={50}
@@ -123,7 +123,7 @@ const AddNewQuestion = () => {
           </div>
 
           <div className="input-group">
-            <label className="block text-white/90 font-medium mb-3">
+            <label className="block text-white/90 font-medium mb-2 sm:mb-3 text-sm sm:text-base">
               Question Title
             </label>
             <div className="relative">
@@ -132,7 +132,7 @@ const AddNewQuestion = () => {
                 placeholder="What's your question?"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                className="w-full px-4 sm:px-5 py-3 pr-16 sm:pr-20 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-sm sm:text-base"
                 required
                 maxLength={200}
               />
@@ -143,27 +143,31 @@ const AddNewQuestion = () => {
           </div>
 
           <div className="input-group">
-            <label className="block text-white/90 font-medium mb-3">
+            <label className="block text-white/90 font-medium mb-2 sm:mb-3 text-sm sm:text-base">
               Description
             </label>
-            <RichTextEditor
-              value={description}
-              onChange={handleDescriptionChange}
-              placeholder="Provide more details about your question..."
-            />
+            <div className="rich-text-wrapper">
+              <RichTextEditor
+                value={description}
+                onChange={handleDescriptionChange}
+                placeholder="Provide more details about your question..."
+              />
+            </div>
             <span className="text-xs text-gray-400 mt-2 block">
               {charCount}/2000
             </span>
           </div>
 
           <div className="input-group">
-            <label className="block text-white/90 font-medium mb-3">Tags</label>
+            <label className="block text-white/90 font-medium mb-2 sm:mb-3 text-sm sm:text-base">
+              Tags
+            </label>
             <input
               type="text"
               placeholder="Tags (e.g., javascript, react, css)"
               value={tags}
               onChange={formatTag}
-              className="w-full px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              className="w-full px-4 sm:px-5 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-sm sm:text-base"
               title="Tags should be comma-separated"
             />
             <span className="text-xs text-gray-400 mt-2">
@@ -173,12 +177,12 @@ const AddNewQuestion = () => {
 
           <button
             type="submit"
-            className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 text-sm sm:text-base"
             disabled={isLoading}
           >
             {isLoading ? (
               <>
-                <span className="inline-flex items-center gap-2">
+                <span className="inline-flex items-center gap-2 justify-center">
                   <span className="animate-pulse">•</span>
                   <span
                     className="animate-pulse"
