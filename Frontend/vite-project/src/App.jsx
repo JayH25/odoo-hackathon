@@ -5,6 +5,7 @@ import SignUp from "./Component/Signup";
 import Home from "./Component/Home";
 import About from "./Component/About";
 import Team from "./Component/Team";
+import AskQuestion from "./Component/AskQuestion";
 
 function App() {
   const router = createBrowserRouter([
@@ -13,7 +14,7 @@ function App() {
       element: <Layout />, // Layout with Navbar/Footer
       children: [
         { index: true, element: <Home /> },
-        { path: "about", element: <About /> },
+        { path: "addNewQuestion", element: <AskQuestion /> },
         { path: "team", element: <Team /> },
       ],
     },
