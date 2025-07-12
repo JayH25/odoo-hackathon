@@ -5,6 +5,7 @@ import { FiSearch } from "react-icons/fi";
 const Home = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -26,13 +27,18 @@ const Home = () => {
   }, []);
 
   const handleAskQuestion = () => {
-    const isLoggedIn = document.cookie.includes("token"); //  Check for token cookie
+    const isLoggedIn = document.cookie.includes("token");
     if (isLoggedIn) {
       navigate("/addNewQuestion");
     } else {
       navigate("/login");
     }
   };
+
+  // ✅ Filtered Questions based on Search Query
+  const filteredQuestions = questions.filter((q) =>
+    q.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
@@ -63,6 +69,8 @@ const Home = () => {
             <input
               type="text"
               placeholder="Search questions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-grow bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <FiSearch className="text-white text-2xl cursor-pointer hover:text-blue-400" />
@@ -71,26 +79,30 @@ const Home = () => {
 
         {/* Questions List */}
         <ul className="space-y-6">
-          {questions.map((q) => (
-            <li
-              key={q._id}
-              className="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <h2 className="text-xl font-semibold text-white">{q.title}</h2>
-              <p className="text-gray-300 mt-2">{q.description}</p>
-              <div className="text-sm text-blue-400 mt-3">
-                Tags: {q.tags.join(", ")}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                Asked by: {q.username}
-              </div>
-              <button onClick={() => navigate(`/answer/${q._id}`)}>
-                <span className="inline-block mt-2 px-2 py-1 bg-gray-700 text-sm rounded-full">
-                  {q.answers.length} answers
-                </span>
-              </button>
-            </li>
-          ))}
+          {filteredQuestions.length > 0 ? (
+            filteredQuestions.map((q) => (
+              <li
+                key={q._id}
+                className="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <h2 className="text-xl font-semibold text-white">{q.title}</h2>
+                <p className="text-gray-300 mt-2">{q.description}</p>
+                <div className="text-sm text-blue-400 mt-3">
+                  Tags: {q.tags.join(", ")}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Asked by: {q.username}
+                </div>
+                <button onClick={() => navigate(`/answer/${q._id}`)}>
+                  <span className="inline-block mt-2 px-2 py-1 bg-gray-700 text-sm rounded-full">
+                    {q.answers.length} answers
+                  </span>
+                </button>
+              </li>
+            ))
+          ) : (
+            <p className="text-center text-gray-400">No questions found.</p>
+          )}
         </ul>
       </div>
     </div>
