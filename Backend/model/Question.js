@@ -18,6 +18,10 @@ const answerSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    voters: {
+      type: [String], // To track who voted on this answer (optional)
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -44,7 +48,16 @@ const askQuestionSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    answers: [answerSchema], // ✅ Embed the Answer schema
+    answers: [answerSchema],
+
+    upvotes: {
+      type: Number,
+      default: 0,
+    },
+    upvotedBy: {
+      type: [String], // Store usernames (or user IDs) who have upvoted
+      default: [],
+    },
   },
   {
     timestamps: true,
