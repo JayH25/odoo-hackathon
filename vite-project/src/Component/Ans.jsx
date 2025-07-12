@@ -162,9 +162,9 @@ const Ans = () => {
                       <span className="text-white font-medium px-2">
                         {a.votes}
                       </span>
-                      <button className="text-gray-400 hover:text-red-400 transition-colors p-1">
+                      {/* <button className="text-gray-400 hover:text-red-400 transition-colors p-1">
                         ⬇
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 
